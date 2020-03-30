@@ -61,5 +61,6 @@
 }
 
 .active-caps {
+    color: rgb(167, 31, 76);
     text-transform: uppercase;
 }

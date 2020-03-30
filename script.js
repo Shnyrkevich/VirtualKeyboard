@@ -102,7 +102,8 @@ if(langStatus == 'rus'){
 const buttonMas = document.querySelectorAll('.keybord-body__button');
 
 //Блок локальных переменных для управляющих кнопок 
-let reg = /^Key/i; 
+let reg = /^Key/i;
+let regArrow = /^Arrow/i; 
 let capsClick = false;
 
 function swapValues(buttonMas, mas){
@@ -110,6 +111,39 @@ function swapValues(buttonMas, mas){
         if(buttonMas[i].value != mas[i]){
             buttonMas[i].value = mas[i];
         }
+    }
+}
+
+function arrowAction(code){
+    switch(code){ 
+        case 'ArrowLeft':
+            if(textarea.selectionEnd >= 0){
+                textarea.selectionEnd -= 1;
+            }
+        break;
+        case 'ArrowRight':
+            if(textarea.selectionEnd <= textarea.value.length){
+                textarea.selectionStart += 1; 
+            } 
+        break;
+        case 'ArrowDown':
+            for(let i = textarea.selectionEnd; i <= textarea.value.length; i++){
+                if(textarea.value[i] == '\n'){
+                    console.log(i);
+                    textarea.selectionStart = i+1;
+                    break;
+                }
+            }
+        break;
+        case 'ArrowUp':
+            for(let i = textarea.selectionEnd; i >= 0; i--){
+                if(textarea.value[i] == '\n'){
+                    console.log(i);
+                    textarea.selectionEnd = i;
+                    break;
+                }
+            } 
+        break;
     }
 }
 
@@ -144,6 +178,7 @@ function action(el, event){
                 } 
             });
         }
+
     } else if(event.code == 'Tab'){ // Реализация Tab два пробела
         textarea.value += '  '; 
     } else if(event.shiftKey){
@@ -152,7 +187,7 @@ function action(el, event){
         } else {
             swapValues(buttonMas, englishShiftLowerCase);
         }
-        if(el.value != 'Shift'){
+        if(el.value != 'Shift' ){
             textarea.value += el.value;
         }
     } else if(event.altKey || event.ctrlKey || event.key == 'AltGraph'){ // Дефолтное действие на отдельно нажатые кнопки типа Alt или Ctrl
@@ -165,12 +200,16 @@ function action(el, event){
     } else if(event.code == 'Delete'){ // Реализация Delete условия ловит ошибку пока не придумал что на нее посавить
         textarea.setRangeText('', textarea.selectionEnd, textarea.selectionStart, 'end');
         if(textarea.selectionStart == textarea.selectionEnd){
-            //прикольчики
+            textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd+1, 'end');
         }
     } else if( event.code == 'Enter'){ // Пепевод корретки на новую строку при нажатии "ENTER"
         textarea.value += '\n';
-    } else { // Славянское добавление символа
-        textarea.value += el.value; 
+    } else if( regArrow.test(event.code)) { // Нажатие стрелок: перенос коретки
+        arrowAction(event.code);
+    } else if (capsClick) { // Славянское добавление символа
+        textarea.value += el.value.toUpperCase();
+    } else {
+        textarea.value += el.value;
     }
 }
 
@@ -199,6 +238,7 @@ function action(el, event){
 
 document.addEventListener('keydown', (event) => { //Слушаю нажатие, функция выбирает действие
     //Добавление анимации нажатия
+    event.preventDefault();
     buttonMas.forEach((el) => {
         if(el.name == event.code){
             el.classList.add('active-button');
