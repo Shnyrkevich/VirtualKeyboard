@@ -79,8 +79,6 @@ const englishShiftLowerCase = ['~','!','@','#','$','%','^','&','*','(',')','_','
                         'Ctrl','Alt',' ','Alt','Ctrl','←','↓', '→'
                         ];
 
-
-
 //Массив кодов кнопок клавиатуры
 const keyboardCodes = ['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal','Backspace',
                     'Tab','KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight','Backslash', 'Delete',
@@ -116,17 +114,17 @@ function swapValues(buttonMas, mas){
 
 function arrowAction(code){
     switch(code){ 
-        case 'ArrowLeft' || '←':
+        case 'ArrowLeft':
             if(textarea.selectionEnd >= 0){
                 textarea.selectionEnd -= 1;
             }
         break;
-        case 'ArrowRight' || '':
+        case 'ArrowRight':
             if(textarea.selectionEnd <= textarea.value.length){
                 textarea.selectionStart += 1; 
             } 
         break;
-        case 'ArrowDown' || '':
+        case 'ArrowDown':
             for(let i = textarea.selectionEnd; i <= textarea.value.length; i++){
                 if(textarea.value[i] == '\n'){
                     console.log(i);
@@ -135,11 +133,11 @@ function arrowAction(code){
                 }
             }
         break;
-        case 'ArrowUp' || '':
+        case 'ArrowUp':
             for(let i = textarea.selectionEnd; i >= 0; i--){
                 if(textarea.value[i] == '\n'){
                     console.log(i);
-                    textarea.selectionEnd = i;
+                    textarea.selectionEnd = i-1;
                     break;
                 }
             } 
