@@ -116,17 +116,17 @@ function swapValues(buttonMas, mas){
 
 function arrowAction(code){
     switch(code){ 
-        case 'ArrowLeft':
+        case 'ArrowLeft' || '←':
             if(textarea.selectionEnd >= 0){
                 textarea.selectionEnd -= 1;
             }
         break;
-        case 'ArrowRight':
+        case 'ArrowRight' || '':
             if(textarea.selectionEnd <= textarea.value.length){
                 textarea.selectionStart += 1; 
             } 
         break;
-        case 'ArrowDown':
+        case 'ArrowDown' || '':
             for(let i = textarea.selectionEnd; i <= textarea.value.length; i++){
                 if(textarea.value[i] == '\n'){
                     console.log(i);
@@ -135,7 +135,7 @@ function arrowAction(code){
                 }
             }
         break;
-        case 'ArrowUp':
+        case 'ArrowUp' || '':
             for(let i = textarea.selectionEnd; i >= 0; i--){
                 if(textarea.value[i] == '\n'){
                     console.log(i);
@@ -144,6 +144,29 @@ function arrowAction(code){
                 }
             } 
         break;
+    }
+}
+
+function capsAction(){
+    if(capsClick == false) {
+        capsClick = true;
+        buttonMas.forEach(el => {
+            if(reg.test(el.name) || el.name == 'BracketLeft'
+             || el.name == 'BracketRight' || el.name == 'Backquote'
+              || el.name == 'Semicolon' || el.name =='Quote'  
+              || el.name == 'Comma' || el.name == 'Period' || el.name == 'Slash' && langStatus == false){
+                el.classList.add('active-caps');
+            } else if(reg.test(el.name) && langStatus) {
+                el.classList.add('active-caps');
+            } 
+        });
+    } else {
+        capsClick = false; 
+        buttonMas.forEach(el => {
+            if(el.classList.contains('active-caps')){
+                el.classList.remove('active-caps');
+            } 
+        });
     }
 }
 
@@ -158,27 +181,7 @@ function action(el, event){
         }
         localStorage.value = langStatus;
     } else if( event.code == 'CapsLock'){ // Если CAPS активен навешиваем на кнопки обычные класс с uppercase
-        if(capsClick == false) {
-            capsClick = true;
-            buttonMas.forEach(el => {
-                if(reg.test(el.name) || el.name == 'BracketLeft'
-                 || el.name == 'BracketRight' || el.name == 'Backquote'
-                  || el.name == 'Semicolon' || el.name =='Quote'  
-                  || el.name == 'Comma' || el.name == 'Period' || el.name == 'Slash' && langStatus == false){
-                    el.classList.add('active-caps');
-                } else if(reg.test(el.name) && langStatus) {
-                    el.classList.add('active-caps');
-                } 
-            });
-        } else {
-            capsClick = false; 
-            buttonMas.forEach(el => {
-                if(el.classList.contains('active-caps')){
-                    el.classList.remove('active-caps');
-                } 
-            });
-        }
-
+        capsAction();
     } else if(event.code == 'Tab'){ // Реализация Tab два пробела
         textarea.value += '  '; 
     } else if(event.shiftKey){
@@ -213,28 +216,48 @@ function action(el, event){
     }
 }
 
+function actionMouse(el){
+    if( el.value == 'CapsLock'){ // Если CAPS активен навешиваем на кнопки обычные класс с uppercase
+        capsAction();
+    } else if(el.value == 'Tab'){ // Реализация Tab два пробела
+        textarea.value += '  '; 
+    } else if(el.value == 'Alt' || el.value == 'Shift' || el.value == 'Ctrl' || 
+            el.value == '←' || el.value == '↑' ||  el.value == '↓' || el.value == '→'){ // Дефолтное действие на отдельно нажатые кнопки типа Alt или Ctrl
+        textarea.value += '';
+    } else if(el.value == 'Backspace'){ // Реализация Backpace
+        textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd , 'end');
+        if(textarea.selectionStart == textarea.selectionEnd){
+            textarea.setRangeText('', textarea.selectionStart-1, textarea.selectionEnd , 'end');
+        }
+    } else if(el.value == 'Delete'){ // Реализация Delete условия ловит ошибку пока не придумал что на нее посавить
+        textarea.setRangeText('', textarea.selectionEnd, textarea.selectionStart, 'end');
+        if(textarea.selectionStart == textarea.selectionEnd){
+            textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd+1, 'end');
+        }
+    } else if(el.value == 'Enter'){ // Пепевод корретки на новую строку при нажатии "ENTER"
+        textarea.value += '\n';
+    } else if(capsClick) { // Славянское добавление символа
+        textarea.value += el.value.toUpperCase();
+    } else {
+        textarea.value += el.value;
+    }
+}
+
 //Добавление кнопкам Действия на клик
-/*buttonMas.addEventListener('mousedown', (event) => {
+document.addEventListener('mousedown', (event) => {
     buttonMas.forEach((el) => {
-        if(el.name == event.code){
+        if(el.value == event.target.value){
             el.classList.add('active-button');
+            actionMouse(el, event);
         }  
     });
-    if(event.target.value == 'Tab'){
-        textarea.value += '  '; 
-    } else if(event.target.value == 'Shift' || event.target.value == 'Ctrl' || event.target.value == 'Alt'){
-        textarea.value += '';
-    } else if(event.target.value == 'Backspace'){
-        textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd , 'end');
-        if (input.selectionStart === input.selectionEnd) {
-            input.setRangeText("", input.selectionStart - 1, input.selectionEnd, "end")
-          }
-    } else if(event.target.value == 'Delete'){
-        textarea.setRangeText('', textarea.selectionEnd, textarea.selectionStart, 'end');
-    } else {
-        textarea.value += event.target.value;
-    }
-});*/
+});
+
+document.addEventListener('mouseup', () => {
+    buttonMas.forEach((el) => {
+            el.classList.remove('active-button');
+    });  
+});
 
 document.addEventListener('keydown', (event) => { //Слушаю нажатие, функция выбирает действие
     //Добавление анимации нажатия
@@ -245,7 +268,6 @@ document.addEventListener('keydown', (event) => { //Слушаю нажатие,
             action(el, event);
         }  
     });
-
 });
 
 document.addEventListener('keyup', (event) => { // Слушаю отпуск кнопки убираю Active, а также слежу за Shift
@@ -259,5 +281,4 @@ document.addEventListener('keyup', (event) => { // Слушаю отпуск к�
         }
         el.classList.remove('active-button')
     });
-
 });
