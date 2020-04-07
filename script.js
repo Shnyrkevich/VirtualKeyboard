@@ -188,7 +188,7 @@ function action(el, event){
         } else {
             swapValues(buttonMas, englishShiftLowerCase);
         }
-        if(el.value != 'Shift' && !regArrow.test(event.code)){
+        if(el.value != 'Shift' && !regArrow.test(event.code) && event.altKey && event.ctrlKey){
             textarea.value += el.value;
         }
     } else if(event.altKey || event.ctrlKey || event.key == 'AltGraph'){ // Дефолтное действие на отдельно нажатые кнопки типа Alt или Ctrl
