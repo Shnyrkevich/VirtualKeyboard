@@ -57,7 +57,7 @@ const russianLowerCase = ['ё','1','2','3','4','5','6','7','8','9','0','-','=','
 
 //массив Латинской раскладки
 const englishLowerCase = ['`','1','2','3','4','5','6','7','8','9','0','-','=','Backspace',
-                        'Tab','q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']',`\ `, 'Delete',
+                        'Tab','q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']',`\\`, 'Delete',
                         'CapsLock','a','s','d','f','g','h','j','k','l',';', "'",'Enter',
                         'Shift','z','x','c','v','b','n','m',',','.','/','Shift','↑',
                         'Ctrl','Alt',' ','Alt','Ctrl','←','↓', '→'
@@ -73,7 +73,7 @@ const russianShiftLowerCase = ['Ё','!','"','№',';','%',':','?','*','(',')','_
 
 //Shift English
 const englishShiftLowerCase = ['~','!','@','#','$','%','^','&','*','(',')','_','+','Backspace',
-                        'Tab','Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']',`/`, 'Delete',
+                        'Tab','Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']',`\\`, 'Delete',
                         'CapsLock','A','S','D','F','G','H','J','K','L',':', '"','Enter',
                         'Shift','Z','X','C','V','B','N','M','<','>','?','Shift','↑',
                         'Ctrl','Alt',' ','Alt','Ctrl','←','↓', '→'
@@ -188,7 +188,7 @@ function action(el, event){
         } else {
             swapValues(buttonMas, englishShiftLowerCase);
         }
-        if(el.value != 'Shift' ){
+        if(el.value != 'Shift' && !regArrow.test(event.code)){
             textarea.value += el.value;
         }
     } else if(event.altKey || event.ctrlKey || event.key == 'AltGraph'){ // Дефолтное действие на отдельно нажатые кнопки типа Alt или Ctrl
