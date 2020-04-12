@@ -97,9 +97,11 @@ const keyboardCodes = ['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5',
                 ];
 
 //формитрование кнопок в keybord-body
-let langStatus = localStorage.value || 'rus';
+const rus = 'rus';
+const eng = 'eng';
+let langStatus = localStorage.value || rus;
 
-if(langStatus == 'rus'){
+if(langStatus == rus){
     createBoard(russianLowerCase);
 } else {
     createBoard(englishLowerCase);
@@ -136,7 +138,6 @@ function arrowAction(code){
         case 'ArrowDown':
             for(let i = textarea.selectionEnd; i <= textarea.value.length; i++){
                 if(textarea.value[i] == '\n'){
-                    console.log(i);
                     textarea.selectionStart = i+1;
                     break;
                 }
@@ -145,7 +146,6 @@ function arrowAction(code){
         case 'ArrowUp':
             for(let i = textarea.selectionEnd; i >= 0; i--){
                 if(textarea.value[i] == '\n'){
-                    console.log(i);
                     textarea.selectionEnd = i-1;
                     break;
                 }
@@ -179,11 +179,11 @@ function capsAction(){
 
 function action(el, event){
     if(event.altKey && event.shiftKey){ //Чекаем язык на нажатия alt с shift
-        if(langStatus == 'rus'){
-            langStatus = 'eng';
+        if(langStatus == rus){
+            langStatus = eng;
             swapValues(buttonMas, englishLowerCase);
         } else {
-            langStatus = 'rus';
+            langStatus = rus;
             swapValues(buttonMas, russianLowerCase);
         }
         localStorage.value = langStatus;
@@ -192,7 +192,7 @@ function action(el, event){
     } else if(event.code == 'Tab'){ // Реализация Tab два пробела
         textarea.value += '  '; 
     } else if(event.shiftKey){
-        if(langStatus == 'rus'){ // нажатие shift Показ спецсимволов и уперкейса символов
+        if(langStatus == rus){ // нажатие shift Показ спецсимволов и уперкейса символов
             swapValues(buttonMas, russianShiftLowerCase);
         } else {
             swapValues(buttonMas, englishShiftLowerCase);
@@ -280,7 +280,7 @@ document.addEventListener('keydown', (event) => { //Слушаю нажатие,
 document.addEventListener('keyup', (event) => { // Слушаю отпуск кнопки убираю Active, а также слежу за Shift
     buttonMas.forEach(el => {
         if(el.value == 'Shift'){
-            if(langStatus == 'rus'){
+            if(langStatus == rus){
                 swapValues(buttonMas, russianLowerCase);
             } else {
                 swapValues(buttonMas, englishLowerCase);
