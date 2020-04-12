@@ -154,6 +154,24 @@ function arrowAction(code){
     }
 }
 
+function symbolDelete(code){
+    if(code == 'Backspace'){
+        if(textarea.value != ""){
+            textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd , 'end');
+            if(textarea.selectionStart == textarea.selectionEnd){
+                textarea.setRangeText('', textarea.selectionStart-1, textarea.selectionEnd , 'end');
+            }
+        }
+    } else if(code == 'Delete'){
+        if(textarea.value != ""){
+            textarea.setRangeText('', textarea.selectionEnd, textarea.selectionStart, 'end');
+            if(textarea.selectionStart == textarea.selectionEnd){
+                textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd+1, 'end');
+            }
+        }
+    }
+}
+
 function capsAction(){
     if(capsClick == false) {
         capsClick = true;
@@ -187,66 +205,80 @@ function action(el, event){
             swapValues(buttonMas, russianLowerCase);
         }
         localStorage.value = langStatus;
-    } else if( event.code == 'CapsLock'){ // Если CAPS активен навешиваем на кнопки обычные класс с uppercase
-        capsAction();
-    } else if(event.code == 'Tab'){ // Реализация Tab два пробела
-        textarea.value += '  '; 
-    } else if(event.shiftKey){
-        if(langStatus == rus){ // нажатие shift Показ спецсимволов и уперкейса символов
-            swapValues(buttonMas, russianShiftLowerCase);
-        } else {
-            swapValues(buttonMas, englishShiftLowerCase);
-        }
-        if(el.value != 'Shift' && !regArrow.test(event.code)){
-            textarea.value += el.value;
-        }
-    } else if(event.altKey || event.ctrlKey || event.key == 'AltGraph'){ // Дефолтное действие на отдельно нажатые кнопки типа Alt или Ctrl
-        textarea.value += '';
-    } else if(event.code == 'Backspace'){ // Реализация Backpace
-        textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd , 'end');
-        if(textarea.selectionStart == textarea.selectionEnd){
-            textarea.setRangeText('', textarea.selectionStart-1, textarea.selectionEnd , 'end');
-        }
-    } else if(event.code == 'Delete'){ // Реализация Delete условия ловит ошибку пока не придумал что на нее посавить
-        textarea.setRangeText('', textarea.selectionEnd, textarea.selectionStart, 'end');
-        if(textarea.selectionStart == textarea.selectionEnd){
-            textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd+1, 'end');
-        }
-    } else if( event.code == 'Enter'){ // Пепевод корретки на новую строку при нажатии "ENTER"
-        textarea.value += '\n';
-    } else if( regArrow.test(event.code)) { // Нажатие стрелок: перенос коретки
-        arrowAction(event.code);
-    } else if (capsClick) { // Славянское добавление символа
-        textarea.value += el.value.toUpperCase();
-    } else {
-        textarea.value += el.value;
-    }
+    } 
+
+    switch(event.code){
+        case 'CapsLock': // Если CAPS активен навешиваем на кнопки обычные класс с uppercase
+            capsAction();
+        break;
+        case 'Tab': // Реализация Tab два пробела
+            textarea.value += '  '; 
+        break;
+        case 'Backspace': // Реализация Backpace
+            symbolDelete(event.code);
+        break;
+        case 'Delete':// Реализация Delete условия ловит ошибку пока не придумал что на нее посавить
+            symbolDelete(event.code);
+        break;
+        case 'Enter': // Пепевод корретки на новую строку при нажатии "ENTER"
+            textarea.value += '\n';
+        break; 
+        case 'ShiftLeft':
+        case 'ShiftRight':
+            if(langStatus == rus){ // нажатие shift Показ спецсимволов и уперкейса символов
+                swapValues(buttonMas, russianShiftLowerCase);
+            } else {
+                swapValues(buttonMas, englishShiftLowerCase);
+            }
+            if(el.value != 'Shift' && !regArrow.test(event.code)){
+                textarea.value += el.value;
+            }
+        break;
+        case 'AltLeft':
+        case 'ControlLeft':
+        case 'AltRight':
+        case 'ControlRight':
+            textarea.value += '';
+        break;
+        default:
+            if( regArrow.test(event.code)) { // Нажатие стрелок: перенос коретки
+                arrowAction(event.code);
+            } else if (capsClick) { // Славянское добавление символа
+                textarea.value += el.value.toUpperCase();
+            } else {
+                textarea.value += el.value;
+            }
+        break;
+    }  
 }
 
 function actionMouse(el){
-    if( el.value == 'CapsLock'){ // Если CAPS активен навешиваем на кнопки обычные класс с uppercase
-        capsAction();
-    } else if(el.value == 'Tab'){ // Реализация Tab два пробела
-        textarea.value += '  '; 
-    } else if(el.value == 'Alt' || el.value == 'Shift' || el.value == 'Ctrl' || 
-            el.value == '←' || el.value == '↑' ||  el.value == '↓' || el.value == '→'){ // Дефолтное действие на отдельно нажатые кнопки типа Alt или Ctrl
-        textarea.value += '';
-    } else if(el.value == 'Backspace'){ // Реализация Backpace
-        textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd , 'end');
-        if(textarea.selectionStart == textarea.selectionEnd){
-            textarea.setRangeText('', textarea.selectionStart-1, textarea.selectionEnd , 'end');
-        }
-    } else if(el.value == 'Delete'){ // Реализация Delete условия ловит ошибку пока не придумал что на нее посавить
-        textarea.setRangeText('', textarea.selectionEnd, textarea.selectionStart, 'end');
-        if(textarea.selectionStart == textarea.selectionEnd){
-            textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd+1, 'end');
-        }
-    } else if(el.value == 'Enter'){ // Пепевод корретки на новую строку при нажатии "ENTER"
-        textarea.value += '\n';
-    } else if(capsClick) { // Славянское добавление символа
-        textarea.value += el.value.toUpperCase();
-    } else {
-        textarea.value += el.value;
+    switch(el.value){
+        case 'CapsLock': // Если CAPS активен навешиваем на кнопки обычные класс с uppercase
+            capsAction();
+        break;
+        case 'Tab': // Реализация Tab два пробела
+            textarea.value += '  '; 
+        break;
+        case 'Backspace': // Реализация Backpace
+            symbolDelete(el.value);
+        break;
+        case 'Delete':// Реализация Delete условия ловит ошибку пока не придумал что на нее посавить
+            symbolDelete(el.value);
+        break;
+        case 'Enter': // Пепевод корретки на новую строку при нажатии "ENTER"
+            textarea.value += '\n';
+        break; 
+        default: 
+            if(el.value == 'Alt' || el.value == 'Shift' || el.value == 'Ctrl' || 
+                el.value == '←' || el.value == '↑' ||  el.value == '↓' || el.value == '→'){ // Дефолтное действие на отдельно нажатые кнопки типа Alt или Ctrl
+                textarea.value += '';
+            } else if(capsClick) { // Славянское добавление символа
+                textarea.value += el.value.toUpperCase();
+            } else {
+                textarea.value += el.value;
+            }
+        break;
     }
 }
 
