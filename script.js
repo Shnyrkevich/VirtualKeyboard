@@ -1,3 +1,4 @@
+
 //Получаем доступ к head, создаем link закидываем ссылку на стили
 const head = document.getElementsByTagName('head')[0];
 const link = document.createElement('link');
@@ -28,13 +29,21 @@ function createButton(el, code) {
     buttonKeybord.className = 'keybord-body__button';
     if(code == 'Space'){
         buttonKeybord.classList.add('space');
-    } else if( el == 'Shift' || el == 'Delete') {
-        buttonKeybord.classList.add('tool');
-    } else if(el == 'Backspace' || el == 'CapsLock' || el == 'Enter'){ 
-        buttonKeybord.classList.add('tool-back');
-    } else if (el == '↑'){
-        buttonKeybord.classList.add('arrow');
-    }
+    } 
+    switch( el ){
+        case 'Shift':
+        case 'Delete':
+            buttonKeybord.classList.add('tool');
+        break;
+        case 'Backspace':
+        case 'CapsLock':
+        case 'Enter':
+            buttonKeybord.classList.add('tool-back');
+        break;
+        case '↑':
+            buttonKeybord.classList.add('arrow');
+        break;
+    }   
     buttonKeybord.type = 'button';
     buttonKeybord.value = el;
     buttonKeybord.name = code;
